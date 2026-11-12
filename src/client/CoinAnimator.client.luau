@@ -1,5 +1,7 @@
 local RunService = game:GetService("RunService")
 local Debris = game:GetService("Debris")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Config = require(ReplicatedStorage.Shared.Config)
 
 local SPIN_SPEED = 2 -- radians per second
 local BOB_HEIGHT = 0.5 -- studs
@@ -43,6 +45,19 @@ local function track(coin: Instance)
 		light.Range = 8
 		light.Brightness = 1
 		light.Parent = coin
+
+		-- Gold coins also shimmer with a constant trickle of sparks.
+		if coin:GetAttribute("Value") == Config.GOLD_VALUE then
+			local shimmer = Instance.new("ParticleEmitter")
+			shimmer.Color = ColorSequence.new(Color3.fromRGB(255, 220, 120))
+			shimmer.Lifetime = NumberRange.new(0.6, 1)
+			shimmer.Speed = NumberRange.new(1, 3)
+			shimmer.SpreadAngle = Vector2.new(180, 180)
+			shimmer.Size = NumberSequence.new(0.4, 0)
+			shimmer.LightEmission = 1
+			shimmer.Rate = 8
+			shimmer.Parent = coin
+		end
 	end
 end
 

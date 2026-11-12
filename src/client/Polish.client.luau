@@ -14,6 +14,24 @@ atmosphere.Haze = 1.5
 atmosphere.Color = Color3.fromRGB(199, 225, 255)
 atmosphere.Parent = Lighting
 
+-- Post-effects: glowing coins, warmer colors, sunlight shafts.
+local function effect(className, props)
+	local fx = Lighting:FindFirstChildOfClass(className) or Instance.new(className)
+	for name, value in props do
+		fx[name] = value
+	end
+	fx.Parent = Lighting
+end
+effect("BloomEffect", { Intensity = 0.6, Size = 24, Threshold = 0.9 })
+effect("ColorCorrectionEffect", { Saturation = 0.15, Contrast = 0.1, TintColor = Color3.fromRGB(255, 248, 235) })
+effect("SunRaysEffect", { Intensity = 0.15, Spread = 0.8 })
+
+-- Soft clouds, set on the Terrain.
+local clouds = workspace.Terrain:FindFirstChildOfClass("Clouds") or Instance.new("Clouds")
+clouds.Cover = 0.55
+clouds.Density = 0.6
+clouds.Parent = workspace.Terrain
+
 -- Grassy ground instead of the default grey baseplate.
 local baseplate = workspace:FindFirstChild("Baseplate")
 if baseplate then

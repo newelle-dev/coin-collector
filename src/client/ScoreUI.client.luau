@@ -16,8 +16,29 @@ label.BackgroundTransparency = 0.4
 label.TextScaled = true
 label.Font = Enum.Font.GothamBold
 label.TextColor3 = Color3.new(1, 1, 1)
-label.Text = "Coins: 0"
+label.Text = "0"
 label.Parent = gui
+
+-- Coin icon to the left of the number, and a bounce when the score rises.
+local padding = Instance.new("UIPadding")
+padding.PaddingLeft = UDim.new(0, 44)
+padding.Parent = label
+
+local icon = Instance.new("Frame")
+icon.Size = UDim2.fromOffset(30, 30)
+icon.Position = UDim2.fromOffset(8, 10)
+icon.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
+icon.Parent = label
+local iconCorner = Instance.new("UICorner")
+iconCorner.CornerRadius = UDim.new(1, 0)
+iconCorner.Parent = icon
+local iconStroke = Instance.new("UIStroke")
+iconStroke.Color = Color3.fromRGB(180, 120, 0)
+iconStroke.Thickness = 3
+iconStroke.Parent = icon
+
+local labelScale = Instance.new("UIScale")
+labelScale.Parent = label
 
 local timerLabel = Instance.new("TextLabel")
 timerLabel.Size = UDim2.fromOffset(160, 40)
@@ -69,10 +90,12 @@ local lastScore = nil -- nil until the first update, so loading saved coins does
 local gotScore = false
 ReplicatedStorage:WaitForChild("ScoreUpdate").OnClientEvent:Connect(function(score)
 	gotScore = true
-	label.Text = "Coins: " .. score
+	label.Text = tostring(score)
 	if lastScore and score > lastScore then
 		pickupSound:Play()
 		showPopup(score - lastScore)
+		labelScale.Scale = 1.25
+		TweenService:Create(labelScale, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 }):Play()
 	end
 	lastScore = score
 end)
@@ -99,4 +122,27 @@ boostButton.Text = `Speed Boost: {Config.BOOST_PRICE} coins`
 boostButton.Parent = gui
 boostButton.Activated:Connect(function()
 	shopBuy:FireServer()
+end)
+
+-- "New round!" banner slides in each time the server starts a round.
+local banner = Instance.new("TextLabel")
+banner.Size = UDim2.fromOffset(320, 60)
+banner.AnchorPoint = Vector2.new(0.5, 0)
+banner.Position = UDim2.new(0.5, 0, 0, -80)
+banner.BackgroundColor3 = Color3.fromRGB(40, 120, 220)
+banner.TextScaled = true
+banner.Font = Enum.Font.GothamBold
+banner.TextColor3 = Color3.new(1, 1, 1)
+banner.Text = "New round!"
+banner.Parent = gui
+
+workspace:GetAttributeChangedSignal("RoundEndsAt"):Connect(function()
+	TweenService:Create(banner, TweenInfo.new(0.4, Enum.EasingStyle.Back), {
+		Position = UDim2.new(0.5, 0, 0, 80),
+	}):Play()
+	task.delay(1.8, function()
+		TweenService:Create(banner, TweenInfo.new(0.4), {
+			Position = UDim2.new(0.5, 0, 0, -80),
+		}):Play()
+	end)
 end)

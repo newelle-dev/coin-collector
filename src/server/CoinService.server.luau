@@ -109,7 +109,32 @@ shopBuy.OnServerEvent:Connect(function(player)
 	local normalSpeed = humanoid.WalkSpeed
 	player:SetAttribute("Boosted", true)
 	humanoid.WalkSpeed = Config.BOOST_SPEED
+
+	-- Blue trail behind the player while boosted, visible to everyone.
+	local boostParts = {}
+	local root = player.Character:FindFirstChild("HumanoidRootPart")
+	if root then
+		local top = Instance.new("Attachment")
+		top.Position = Vector3.new(0, 1, 0)
+		top.Parent = root
+		local bottom = Instance.new("Attachment")
+		bottom.Position = Vector3.new(0, -1, 0)
+		bottom.Parent = root
+		local trail = Instance.new("Trail")
+		trail.Attachment0 = top
+		trail.Attachment1 = bottom
+		trail.Lifetime = 0.4
+		trail.Color = ColorSequence.new(Color3.fromRGB(80, 170, 255))
+		trail.Transparency = NumberSequence.new(0, 1)
+		trail.LightEmission = 1
+		trail.Parent = root
+		boostParts = { top, bottom, trail }
+	end
+
 	task.delay(Config.BOOST_SECONDS, function()
+		for _, part in boostParts do
+			part:Destroy()
+		end
 		player:SetAttribute("Boosted", nil)
 		local current = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
 		if current then
