@@ -1,5 +1,24 @@
 local DataStoreService = game:GetService("DataStoreService")
-local store = DataStoreService:GetDataStore("Coins_v1")
+local RunService = game:GetService("RunService")
+
+-- An unpublished place can't open DataStores. In Studio only, fall back to an
+-- in-memory fake so the game still runs; a live server must fail loudly instead.
+local ok, store = pcall(DataStoreService.GetDataStore, DataStoreService, "Coins_v1")
+if not ok then
+	if not RunService:IsStudio() then
+		error(store)
+	end
+	warn("[CoinStore] DataStore unavailable (unpublished place): coins won't persist")
+	local memory = {}
+	store = {
+		GetAsync = function(_, key)
+			return memory[key]
+		end,
+		SetAsync = function(_, key, value)
+			memory[key] = value
+		end,
+	}
+end
 
 local MAX_ATTEMPTS = 3
 

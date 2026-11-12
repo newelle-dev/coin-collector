@@ -30,6 +30,24 @@ local function spawnCoin(position, value, color)
 	coin.Material = Enum.Material.Neon
 	coin.CFrame = CFrame.new(position) -- cylinder axis is X, so it stands on edge
 	coin:SetAttribute("Value", value)
+
+	-- Embossed symbol on both flat faces (cylinder axis is X: Right/Left).
+	for _, face in { Enum.NormalId.Right, Enum.NormalId.Left } do
+		local gui = Instance.new("SurfaceGui")
+		gui.Face = face
+		gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+		gui.PixelsPerStud = 50
+		gui.Parent = coin
+		local label = Instance.new("TextLabel")
+		label.Size = UDim2.fromScale(1, 1)
+		label.BackgroundTransparency = 1
+		label.Text = if value == Config.GOLD_VALUE then "★" else "$"
+		label.TextScaled = true
+		label.Font = Enum.Font.FredokaOne
+		label.TextColor3 = Color3.fromRGB(150, 90, 0)
+		label.Parent = gui
+	end
+
 	coin.Parent = coinsFolder
 
 	coin.Touched:Connect(function(hit)
