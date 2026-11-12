@@ -42,3 +42,32 @@ makePart("WallNorth", wideWall, Vector3.new(0, wallY, -edge), wallColor, Enum.Ma
 makePart("WallSouth", wideWall, Vector3.new(0, wallY, edge), wallColor, Enum.Material.Brick)
 makePart("WallEast", tallWall, Vector3.new(edge, wallY, 0), wallColor, Enum.Material.Brick)
 makePart("WallWest", tallWall, Vector3.new(-edge, wallY, 0), wallColor, Enum.Material.Brick)
+
+-- Spawn platform replaces the default spawn pad.
+for _, obj in workspace:GetDescendants() do
+	if obj:IsA("SpawnLocation") then
+		obj:Destroy()
+	end
+end
+
+-- Cylinders lie along X, so rotate them to stand upright.
+local function makeDisc(className: string, name: string, thickness: number, diameter: number, y: number)
+	local disc = Instance.new(className)
+	disc.Name = name
+	disc.Shape = Enum.PartType.Cylinder
+	disc.Size = Vector3.new(thickness, diameter, diameter)
+	disc.CFrame = CFrame.new(0, y, 0) * CFrame.Angles(0, 0, math.rad(90))
+	disc.Anchored = true
+	disc.Parent = arena
+	return disc
+end
+
+local ring = makeDisc("Part", "SpawnRing", 0.6, 20, 0.3)
+ring.Color = Color3.fromRGB(80, 170, 255)
+ring.Material = Enum.Material.Neon
+
+local pad = makeDisc("SpawnLocation", "SpawnPlatform", 1, 14, 0.5)
+pad.Color = Color3.fromRGB(235, 235, 240)
+pad.Material = Enum.Material.Marble
+pad.Neutral = true
+pad.Duration = 0 -- no spawn forcefield
