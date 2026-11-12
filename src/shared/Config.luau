@@ -11,4 +11,7 @@ return {
 	BOOST_SPEED = 28, -- default walk speed is 16
 	-- "retro coin pickup sound effect powerup" by Greengem353 (Freesound credit)
 	PICKUP_SOUND_ID = "rbxassetid://93529351909119",
+	-- "Voyage" by DistrokidOfficial (Creator Store, free)
+	MUSIC_ID = "rbxassetid://81083173835517",
+	MUSIC_VOLUME = 0.3,
 }
