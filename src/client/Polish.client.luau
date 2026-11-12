@@ -32,13 +32,6 @@ clouds.Cover = 0.55
 clouds.Density = 0.6
 clouds.Parent = workspace.Terrain
 
--- Grassy ground instead of the default grey baseplate.
-local baseplate = workspace:FindFirstChild("Baseplate")
-if baseplate then
-	baseplate.Color = Color3.fromRGB(110, 160, 90)
-	baseplate.Material = Enum.Material.Grass
-end
-
 -- Looping background music, local to each player.
 local music = Instance.new("Sound")
 music.Name = "BackgroundMusic"

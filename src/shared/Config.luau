@@ -4,7 +4,8 @@ return {
 	COIN_VALUE = 1,
 	GOLD_CHANCE = 0.2, -- fraction of coins that are gold
 	GOLD_VALUE = 5,
-	SPAWN_RADIUS = 40,
+	SPAWN_RADIUS = 50, -- must stay inside the arena
+	ARENA_SIZE = 128, -- studs per side
 	ROUND_SECONDS = 60,
 	BOOST_PRICE = 20, -- coins for a speed boost
 	BOOST_SECONDS = 15,
