@@ -88,6 +88,36 @@ scoreRequest.OnServerEvent:Connect(function(player)
 	end
 end)
 
+-- Shop: the server checks the price and cooldown, so the client can't cheat.
+local shopBuy = Instance.new("RemoteEvent")
+shopBuy.Name = "ShopBuy"
+shopBuy.Parent = ReplicatedStorage
+
+shopBuy.OnServerEvent:Connect(function(player)
+	if player:GetAttribute("Boosted") or not player:GetAttribute("CoinsLoaded") then
+		return
+	end
+	local coins = player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Coins")
+	local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+	if not coins or not humanoid or coins.Value < Config.BOOST_PRICE then
+		return
+	end
+
+	coins.Value -= Config.BOOST_PRICE
+	scoreUpdate:FireClient(player, coins.Value)
+
+	local normalSpeed = humanoid.WalkSpeed
+	player:SetAttribute("Boosted", true)
+	humanoid.WalkSpeed = Config.BOOST_SPEED
+	task.delay(Config.BOOST_SECONDS, function()
+		player:SetAttribute("Boosted", nil)
+		local current = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+		if current then
+			current.WalkSpeed = normalSpeed
+		end
+	end)
+end)
+
 Players.PlayerAdded:Connect(function(player)
 	local leaderstats = Instance.new("Folder")
 	leaderstats.Name = "leaderstats"

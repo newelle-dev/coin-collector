@@ -6,6 +6,9 @@ return {
 	GOLD_VALUE = 5,
 	SPAWN_RADIUS = 40,
 	ROUND_SECONDS = 60,
+	BOOST_PRICE = 20, -- coins for a speed boost
+	BOOST_SECONDS = 15,
+	BOOST_SPEED = 28, -- default walk speed is 16
 	-- "retro coin pickup sound effect powerup" by Greengem353 (Freesound credit)
 	PICKUP_SOUND_ID = "rbxassetid://93529351909119",
 }

@@ -85,3 +85,18 @@ task.spawn(function()
 		task.wait(1)
 	end
 end)
+
+-- Shop button: the server decides whether the purchase goes through.
+local shopBuy = ReplicatedStorage:WaitForChild("ShopBuy")
+local boostButton = Instance.new("TextButton")
+boostButton.Size = UDim2.fromOffset(240, 50)
+boostButton.Position = UDim2.new(0, 20, 1, -70)
+boostButton.BackgroundColor3 = Color3.fromRGB(40, 120, 220)
+boostButton.TextScaled = true
+boostButton.Font = Enum.Font.GothamBold
+boostButton.TextColor3 = Color3.new(1, 1, 1)
+boostButton.Text = `Speed Boost: {Config.BOOST_PRICE} coins`
+boostButton.Parent = gui
+boostButton.Activated:Connect(function()
+	shopBuy:FireServer()
+end)
