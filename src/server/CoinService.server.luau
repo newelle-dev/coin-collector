@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Config = require(ReplicatedStorage.Shared.Config)
+local CoinStore = require(script.Parent.CoinStore)
 
 -- Server tells each client its score through this event.
 local scoreUpdate = Instance.new("RemoteEvent")
@@ -59,6 +60,38 @@ Players.PlayerAdded:Connect(function(player)
 	local coins = Instance.new("IntValue")
 	coins.Name = "Coins"
 	coins.Parent = leaderstats
+
+	local saved = CoinStore.load(player.UserId)
+	if not saved then
+		player:Kick("Couldn't load your coins. Please rejoin.")
+		return
+	end
+	-- Player may have left while we were loading.
+	if not player.Parent then
+		CoinStore.release(player.UserId)
+		return
+	end
+	coins.Value = saved
+	scoreUpdate:FireClient(player, saved)
+	-- shortcut: the first update can be missed if the client has not connected yet; the label then shows 0 until the next pickup.
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	local coins = player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Coins")
+	if coins then
+		CoinStore.save(player.UserId, coins.Value)
+	end
+	CoinStore.release(player.UserId)
+end)
+
+-- Save everyone when the server shuts down.
+game:BindToClose(function()
+	for _, player in Players:GetPlayers() do
+		local coins = player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Coins")
+		if coins then
+			CoinStore.save(player.UserId, coins.Value)
+		end
+	end
 end)
 
 spawnCoins()

@@ -45,10 +45,10 @@ local function showPopup(amount)
 	end)
 end
 
-local lastScore = 0
+local lastScore = nil -- nil until the first update, so loading saved coins doesn't pop
 ReplicatedStorage:WaitForChild("ScoreUpdate").OnClientEvent:Connect(function(score)
 	label.Text = "Coins: " .. score
-	if score > lastScore then
+	if lastScore and score > lastScore then
 		pickupSound:Play()
 		showPopup(score - lastScore)
 	end
